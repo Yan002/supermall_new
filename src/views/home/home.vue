@@ -3,7 +3,7 @@
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
     <!-- <router-view></router-view> -->
-    <scroll class="content">
+    <scroll class="content" ref="scroll">
       <home-swiper :banners="banners" />
       <recommend-view :recommends="recommends" />
       <feature-view />
@@ -14,8 +14,8 @@
       />
       <good-list :goods="showGoods" />
     </scroll>
-    <back-top/>
-    <p>111</p>
+    <back-top @click.native="backClick"/>
+    <p>111 </p>
   </div>
 </template>
 
@@ -85,6 +85,9 @@ export default {
           this.currenttype = "sell";
           break;
       }
+    },
+    backClick() {
+      this.$refs.scroll.scrollTo(0,0,500);
     },
 
     /*
