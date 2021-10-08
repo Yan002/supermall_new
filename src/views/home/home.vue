@@ -3,7 +3,12 @@
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
     <!-- <router-view></router-view> -->
-    <scroll class="content" ref="scroll">
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+    >
       <home-swiper :banners="banners" />
       <recommend-view :recommends="recommends" />
       <feature-view />
@@ -14,8 +19,8 @@
       />
       <good-list :goods="showGoods" />
     </scroll>
-    <back-top @click.native="backClick"/>
-    <p>111 </p>
+    <back-top @click.native="backClick" v-show="isShowBackTop" />
+    <p>111</p>
   </div>
 </template>
 
@@ -56,6 +61,7 @@ export default {
         sell: { page: 0, list: [] },
       },
       currenttype: "pop",
+      isShowBackTop: false,
     };
   },
   computed: {
@@ -87,9 +93,11 @@ export default {
       }
     },
     backClick() {
-      this.$refs.scroll.scrollTo(0,0,500);
+      this.$refs.scroll.scrollTo(0, 0, 500);
     },
-
+    contentScroll(position) {
+      this.isShowBackTop = position.y < -1000
+    },
     /*
     网络请求相关方法
     */
@@ -138,6 +146,5 @@ export default {
   bottom: 49px;
   left: 0;
   right: 0;
-  
 }
 </style>
