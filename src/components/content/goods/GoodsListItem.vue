@@ -1,6 +1,6 @@
 <template>
   <div class="goodslistitem">
-    <img :src="goodsItem.show.img" alt="" />
+    <img :src="goodsItem.show.img"   @load="imageLoad">
     <div class="goodstext">
       <p>{{ goodsItem.title }}</p>
       <span class="price">{{ parseInt(goodsItem.price) }} </span>
@@ -20,6 +20,11 @@ export default {
       },
     },
   },
+  methods: {
+    imageLoad() {
+      this.$bus.$emit('imgLoad')
+    }
+  }
 };
 </script>
 
