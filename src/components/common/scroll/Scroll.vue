@@ -15,6 +15,10 @@ export default {
   props: {
     probeType: {
       type: Number,
+      default:false
+    },
+    pullUpLoad: {
+      type: Boolean,
       default:0
     }
   },
@@ -28,19 +32,22 @@ export default {
     this.scroll = new BScroll(this.$refs.wrapper, {
       click: true,
       probeType:this.probeType, 
-      //   pullUpLoad:true
+        pullUpLoad:this.pullUpLoad,
     });
     this.scroll.on('scroll',(position) => {
       this.$emit('scroll',position)
     })
-    // this.scroll.on('pullingUp', () => {
-    //   console.log('上拉加载更多！');
-    // })
+    this.scroll.on('pullingUp', () => {
+      this.$emit('pullingUp')
+    })
   },
   methods: {
     scrollTo(x, y, time) {
       this.scroll.scrollTo(x, y, time);
     },
+    finishPullUp() {
+      this.scroll.finishPullUp()
+    }
   },
 };
 </script>
