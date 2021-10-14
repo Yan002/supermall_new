@@ -1,8 +1,13 @@
 <!--  -->
 <template>
   <div id="detail">
-    <detail-nav-bar class="top-nav" @titleClick="titleClick" />
-    <scroll class="content" ref="scroll"  @scroll="contentScroll">
+    <detail-nav-bar class="top-nav" @titleClick="titleClick" ref="nav"/>
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+    >
       <detail-swiper :top-images="topImages" />
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
@@ -15,6 +20,9 @@
       />
       <good-list :goods="recommends" ref="recommends" />
     </scroll>
+    <detail-bottom-bar/>
+    <back-top @click.native="backClick" v-show="isShowBackTop" />
+
   </div>
 </template>
 
@@ -27,6 +35,8 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
+import DetailBottomBar from "./childComps/DetailBottomBar";
+import BackTop from "components/content/backTop/BackTop";
 
 // import {getDetail, getRecommend, Goods,} from "network/detail";
 
@@ -56,7 +66,8 @@ export default {
       commentInfo: {},
       recommends: [],
       themeTopYs: [0],
-      
+      currentIndex: 0,
+      isShowBackTop: false,
     };
   },
   components: {
@@ -67,6 +78,8 @@ export default {
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
+    DetailBottomBar,
+    BackTop,
     Scroll,
     GoodList,
   },
@@ -118,7 +131,6 @@ export default {
     this.$bus.$on("detailimgLoad", () => {
       refresh();
     });
-
   },
   updated() {},
   //请求推荐数据
@@ -130,13 +142,15 @@ export default {
       this.themeTopYs.push(this.$refs.params.$el.offsetTop);
       this.themeTopYs.push(this.$refs.comments.$el.offsetTop);
       this.themeTopYs.push(this.$refs.recommends.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.recommends.$el.offsetTop+10);
+
       // console.log(this.themeTopYs);
     },
     imageLoad() {
       const refresh = debounce(this.$refs.scroll.refresh, 100);
       refresh();
       const aa = debounce(this.getY, 100);
-      aa()
+      aa();
     },
     titleClick(index) {
       switch (index) {
@@ -155,8 +169,43 @@ export default {
       }
     },
     contentScroll(position) {
-      console.log(position.y);
-    }
+      //判断backTop是否显示
+      this.isShowBackTop = position.y < -1000;
+      
+
+      const positionY = -position.y;
+      let length = this.themeTopYs.length;
+      // console.log();
+      for (let i = 0; i < this.themeTopYs.length; i++) {
+        // if (
+        //   this.currentIndex !== i &&
+        //   ((i < length - 1 &&
+        //     positionY >= this.themeTopYs[i] &&
+        //     positionY < this.themeTopYs[i + 1]) ||
+        //     (i === length - 1 && positionY >= this.themeTopYs[i]))
+        // ) {
+        //   this.currentIndex = i;
+        //   // console.log(i);
+        //   this.$refs.nav.currentIndex = this.currentIndex
+        // }
+        if (
+          this.currentIndex !== i &&
+          (i < length - 1 &&
+            positionY >= this.themeTopYs[i] &&
+            positionY < this.themeTopYs[i + 1])
+        ) {
+          this.currentIndex = i;
+          // console.log(i);
+          this.$refs.nav.currentIndex = this.currentIndex
+        }
+      }
+      // for(let i in this.themeTopYs){
+
+      // }
+    },
+    backClick() {
+      this.$refs.scroll.scrollTo(0, 0, 500);
+    },
   },
 };
 </script>
