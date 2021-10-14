@@ -49,7 +49,9 @@
     },
     created () {
       // console.log(this.commentInfo);
-      console.log(this.a);
+      setTimeout(() =>{
+      console.log(this.commentInfo)
+      },2000)
     }
 	}
 </script>

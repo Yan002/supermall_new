@@ -43,6 +43,9 @@
 		    type: Object
       }
     },
+    // created() {
+    //   
+    // },
     filters: {
       sellCountFilter: function (value) {
         if (value < 10000) return value;
