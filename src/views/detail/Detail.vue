@@ -1,18 +1,19 @@
 <!--  -->
 <template>
   <div id="detail">
-    <detail-nav-bar class="top-nav" />
-    <scroll class="content" ref="scroll">
+    <detail-nav-bar class="top-nav" @titleClick="titleClick" />
+    <scroll class="content" ref="scroll"  @scroll="contentScroll">
       <detail-swiper :top-images="topImages" />
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad" />
-      <detail-param-info :param-info="paramInfo" />
+      <detail-param-info ref="params" :param-info="paramInfo" />
       <detail-comment-info
+        ref="comments"
         :comment-info="commentInfo"
         :param-info="paramInfo"
       />
-      <good-list :goods='recommends'/>
+      <good-list :goods="recommends" ref="recommends" />
     </scroll>
   </div>
 </template>
@@ -54,6 +55,8 @@ export default {
       paramInfo: {},
       commentInfo: {},
       recommends: [],
+      themeTopYs: [0],
+      
     };
   },
   components: {
@@ -65,7 +68,7 @@ export default {
     DetailParamInfo,
     DetailCommentInfo,
     Scroll,
-    GoodList
+    GoodList,
   },
   created() {
     this.iid = this.$route.params.iid;
@@ -115,15 +118,45 @@ export default {
     this.$bus.$on("detailimgLoad", () => {
       refresh();
     });
+
   },
-
-
+  updated() {},
   //请求推荐数据
 
   methods: {
-    imageLoad() {
-      this.$refs.scroll.refresh();
+    getY() {
+      this.themeTopYs = [];
+      this.themeTopYs.push(0);
+      this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.comments.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.recommends.$el.offsetTop);
+      // console.log(this.themeTopYs);
     },
+    imageLoad() {
+      const refresh = debounce(this.$refs.scroll.refresh, 100);
+      refresh();
+      const aa = debounce(this.getY, 100);
+      aa()
+    },
+    titleClick(index) {
+      switch (index) {
+        case 0:
+          this.$refs.scroll.scrollTo(0, 0, 100);
+          break;
+        case 1:
+          this.$refs.scroll.scrollTo(0, -this.themeTopYs[1], 300);
+          break;
+        case 2:
+          this.$refs.scroll.scrollTo(0, -this.themeTopYs[2], 300);
+          break;
+        case 3:
+          this.$refs.scroll.scrollTo(0, -this.themeTopYs[3], 300);
+          break;
+      }
+    },
+    contentScroll(position) {
+      console.log(position.y);
+    }
   },
 };
 </script>

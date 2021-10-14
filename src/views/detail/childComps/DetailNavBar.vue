@@ -24,6 +24,12 @@
 import NavBar from "components/common/navbar/NavBar";
 
 export default {
+  props: {
+    currentIndex1:{
+      type: Number,
+      default:0
+    }
+  },
   data() {
     return {
       titles: ["商品", "参数", "评论", "推荐"],
@@ -36,6 +42,7 @@ export default {
   methods: {
     itemClick(index) {
       this.currentIndex = index;
+      this.$emit('titleClick',index)
     },
     backClick() {
         this.$router.back()

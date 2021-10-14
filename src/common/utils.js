@@ -1,9 +1,10 @@
 export function debounce(func, delay) { //防抖函数的包装
   let timer = null;
+  func.fn = this
   return function (...args) {
     if (timer) { clearTimeout(timer) }
     timer = setTimeout(() => {
-      func.apply(this, args)
+      func.apply(func.fn, args)
     }, delay)
   }
 }
