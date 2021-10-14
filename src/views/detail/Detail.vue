@@ -8,12 +8,11 @@
       <detail-shop-info :shop="shop" />
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad" />
       <detail-param-info :param-info="paramInfo" />
-      <text1 :a="a" />
       <detail-comment-info
         :comment-info="commentInfo"
         :param-info="paramInfo"
-        :a="a"
       />
+      <good-list :goods='recommends'/>
     </scroll>
   </div>
 </template>
@@ -27,11 +26,20 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
-import text1 from "./childComps/text1";
+
+// import {getDetail, getRecommend, Goods,} from "network/detail";
 
 import Scroll from "components/common/scroll/Scroll";
+import GoodList from "components/content/goods/GoodsList";
+import { debounce } from "common/utils";
 
-import { getDetail, Goods, Shop, GoodsParam } from "network/detail";
+import {
+  getDetail,
+  Goods,
+  Shop,
+  GoodsParam,
+  getRecommend,
+} from "network/detail";
 // import DetailBaseInfo from './childComps/DetailBaseInfo.vue'
 
 export default {
@@ -45,7 +53,7 @@ export default {
       detailInfo: {},
       paramInfo: {},
       commentInfo: {},
-      a:{a:1}
+      recommends: [],
     };
   },
   components: {
@@ -56,11 +64,12 @@ export default {
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
-    text1,
     Scroll,
+    GoodList
   },
   created() {
     this.iid = this.$route.params.iid;
+    //请求详情数据
     getDetail(this.iid).then((res) => {
       const data = res.data.result;
       //1.获取顶部轮播图的图片
@@ -88,19 +97,29 @@ export default {
 
       //取出评论
       // this.commentInfo = data.rate.list[0]
-      const qq ={
-        canExplain: 1
-      }
+
       // console.log();
       if (data.rate.cRate !== 0) {
-        this.a = qq;
         this.commentInfo = data.rate.list[0];
-
       }
-      console.log(this.commentInfo);
-      console.log(this.a);
+    });
+
+    getRecommend().then((res, error) => {
+      if (error) return;
+      this.recommends = res.data.data.list;
+      // console.log(res.data.data.list[0].image);
     });
   },
+  mounted() {
+    const refresh = debounce(this.$refs.scroll.refresh, 100);
+    this.$bus.$on("detailimgLoad", () => {
+      refresh();
+    });
+  },
+
+
+  //请求推荐数据
+
   methods: {
     imageLoad() {
       this.$refs.scroll.refresh();

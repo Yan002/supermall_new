@@ -29,8 +29,9 @@ export default {
 
 <style  scoped>
 .goods {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 2px;
-  }
+  width: 100vw;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 2px;
+}
 </style>

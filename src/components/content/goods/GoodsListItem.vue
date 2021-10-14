@@ -1,6 +1,6 @@
 <template>
   <div class="goodslistitem" @click="itemClick">
-    <img :src="goodsItem.show.img"   @load="imageLoad">
+    <img :src="showImage" @load="imageLoad" />
     <div class="goodstext">
       <p>{{ goodsItem.title }}</p>
       <span class="price">{{ parseInt(goodsItem.price) }} </span>
@@ -22,12 +22,24 @@ export default {
   },
   methods: {
     imageLoad() {
-      this.$bus.$emit('imgLoad')
+      if (!(this.$route.path.indexOf("/home"))) {
+        // console.log(!(this.$route.path.indexOf("/home")));
+        // console.log('这是home');
+        this.$bus.$emit("homeimgLoad");
+      } else if (!(this.$route.path.indexOf("/detail"))) {
+        // console.log('这是detail详情页');
+        this.$bus.$emit("detailimgLoad");
+      }
     },
     itemClick() {
-      this.$router.push('/detail/' + this.goodsItem.iid)
-    }
-  }
+      this.$router.push("/detail/" + this.goodsItem.iid);
+    },
+  },
+  computed: {
+    showImage() {
+      return this.goodsItem.image || this.goodsItem.show.img;
+    },
+  },
 };
 </script>
 

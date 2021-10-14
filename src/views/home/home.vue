@@ -96,7 +96,7 @@ export default {
   },
   mounted() {
     const refresh = debounce(this.$refs.scroll.refresh, 100);
-    this.$bus.$on("imgLoad", () => {
+    this.$bus.$on("homeimgLoad", () => {
       refresh();
     });
     // setTimeout(() => {
