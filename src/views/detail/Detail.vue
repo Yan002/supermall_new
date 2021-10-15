@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div id="detail">
-    <detail-nav-bar class="top-nav" @titleClick="titleClick" ref="nav"/>
+    <detail-nav-bar class="top-nav" @titleClick="titleClick" ref="nav" />
     <scroll
       class="content"
       ref="scroll"
@@ -9,6 +9,7 @@
       @scroll="contentScroll"
     >
       <detail-swiper :top-images="topImages" />
+
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad" />
@@ -20,9 +21,8 @@
       />
       <good-list :goods="recommends" ref="recommends" />
     </scroll>
-    <detail-bottom-bar/>
+    <detail-bottom-bar @addToCart="addToCart" />
     <back-top @click.native="backClick" v-show="isShowBackTop" />
-
   </div>
 </template>
 
@@ -142,7 +142,7 @@ export default {
       this.themeTopYs.push(this.$refs.params.$el.offsetTop);
       this.themeTopYs.push(this.$refs.comments.$el.offsetTop);
       this.themeTopYs.push(this.$refs.recommends.$el.offsetTop);
-      this.themeTopYs.push(this.$refs.recommends.$el.offsetTop+10);
+      this.themeTopYs.push(this.$refs.recommends.$el.offsetTop + 10);
 
       // console.log(this.themeTopYs);
     },
@@ -171,7 +171,6 @@ export default {
     contentScroll(position) {
       //判断backTop是否显示
       this.isShowBackTop = position.y < -1000;
-      
 
       const positionY = -position.y;
       let length = this.themeTopYs.length;
@@ -190,13 +189,13 @@ export default {
         // }
         if (
           this.currentIndex !== i &&
-          (i < length - 1 &&
-            positionY >= this.themeTopYs[i] &&
-            positionY < this.themeTopYs[i + 1])
+          i < length - 1 &&
+          positionY >= this.themeTopYs[i] &&
+          positionY < this.themeTopYs[i + 1]
         ) {
           this.currentIndex = i;
           // console.log(i);
-          this.$refs.nav.currentIndex = this.currentIndex
+          this.$refs.nav.currentIndex = this.currentIndex;
         }
       }
       // for(let i in this.themeTopYs){
@@ -205,6 +204,17 @@ export default {
     },
     backClick() {
       this.$refs.scroll.scrollTo(0, 0, 500);
+    },
+    addToCart() {
+      const product = {};
+      product.image = this.topImages[0];
+      
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.newPrice;
+      product.iid = this.iid;
+      //将商品添加到购物车中
+      this.$store.dispatch('addCart',product)
     },
   },
 };
