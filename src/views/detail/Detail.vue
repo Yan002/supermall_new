@@ -9,7 +9,6 @@
       @scroll="contentScroll"
     >
       <detail-swiper :top-images="topImages" />
-
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad" />
@@ -226,6 +225,7 @@ export default {
   z-index: 1;
   background-color: #fff;
   height: 100vh;
+  overflow: hidden;
 }
 .content {
   position: absolute;

@@ -184,11 +184,6 @@ export default {
 .home-nav {
   background-color: var(--color-tint);
   color: white;
-  /* position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9; */
 }
 .tabcontrol {
   display: none;
